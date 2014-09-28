@@ -1,5 +1,5 @@
-cloudformation-base
-===================
+CloudformationBase
+==================
 
 Base class for generating Cloudformation templates using Troposphere
 

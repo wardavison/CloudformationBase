@@ -23,6 +23,5 @@ class Stack(object):
 
     @abc.abstractmethod
     def output_template(self):
-        print 'Hello'
         print self.template.to_json()
         return
