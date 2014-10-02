@@ -12,16 +12,28 @@ class Stack(object):
     def __init__(self, projectname, environmentname):
         self.projectname = projectname
         self.environmentname = environmentname
-        self.template = Template()
-
-    def stack_template(self):
-        return self.template
+        self.parameters = []
+        self.mappings = []
+        self.resources = []
+        self.outputs = []
 
     @abc.abstractmethod
     def populate_template(self):
         return
 
-    @abc.abstractmethod
     def output_template(self):
-        print self.template.to_json()
+        template = Template()
+        for parameter in self.parameters:
+            template.add_parameter(parameter)
+
+        for mapping in self.mappings:
+            template.add_mapping(mapping)
+
+        for resource in self.resources:
+            template.add_resource(resource)
+
+        for output in self.outputs:
+            template.add_output(output)
+
+        print template.to_json()
         return
