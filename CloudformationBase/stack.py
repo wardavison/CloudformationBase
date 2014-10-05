@@ -1,7 +1,8 @@
 """ Stack class
 """
 import abc
-from troposphere import Template
+from CloudformationBase.constants import REGION_AZ_MAPPINGS, REGION_AZ_MAP
+from troposphere import Template, Parameter
 
 
 class Stack(object):
@@ -17,6 +18,8 @@ class Stack(object):
         self.resources = []
         self.outputs = []
 
+        self.mappings.append([REGION_AZ_MAP, REGION_AZ_MAPPINGS])
+
     @abc.abstractmethod
     def populate_template(self):
         return
@@ -27,7 +30,7 @@ class Stack(object):
             template.add_parameter(parameter)
 
         for mapping in self.mappings:
-            template.add_mapping(mapping)
+            template.add_mapping(mapping[0], mapping[1])
 
         for resource in self.resources:
             template.add_resource(resource)
@@ -37,3 +40,12 @@ class Stack(object):
 
         print template.to_json()
         return
+
+    @staticmethod
+    def par_custom(title, par_type, par_default, description):
+        return Parameter(
+            title,
+            Type=par_type,
+            Default=par_default,
+            Description=description
+        )

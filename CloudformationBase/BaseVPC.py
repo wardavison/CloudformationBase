@@ -2,7 +2,7 @@
 """
 
 from troposphere import Join, Parameter
-from troposphere.ec2 import VPC, Tag
+from troposphere.ec2 import VPC, Tag, Subnet
 
 
 class BaseVPC(object):
@@ -13,15 +13,15 @@ class BaseVPC(object):
         pass
 
     @staticmethod
-    def par_vpccidrblock(title):
+    def par_cidrblock(title, description, default):
         """
-        :return: Troposphere parameter object for the VPC CIDR block
+        :return: Troposphere parameter object for a CIDR block
         """
         return Parameter(
             title,
-            Description="VPC CIDR Block",
-            Type="String",
-            Default="10.0.0.0/16"
+            Description=description,
+            Type='String',
+            Default=default
         )
 
     @staticmethod
@@ -47,4 +47,29 @@ class BaseVPC(object):
                                         '-',
                                         environmentname,
                                         '-VPC']))]
+        )
+
+    @staticmethod
+    def res_subnet(title, namesuffix, vpcaz, cidrblock, vpcid, projectname,
+                   environmentname):
+        """
+        :param title: Title for the JSON Subnet resource (string)
+        :param namesuffix: Display name suffix for the subnet (string)
+        :param vpcaz: AvailabilityZone for the subnet (string)
+        :param cidrblock: CIDR block for the subnet e.g. 10.0.0.0/24 (string)
+        :param vpcid: ID of the VPC this subnet should be linked to (string)
+        :param projectname: Name of project (used to form name) (string)
+        :param environmentname: Name of environment (used to form name) (string)
+        :return: Troposphere Subnet object
+        """
+        return Subnet(
+            title,
+            AvailabilityZone=vpcaz,
+            CidrBlock=cidrblock,
+            Tags=[Tag('Name', Join('', [projectname,
+                                        '-',
+                                        environmentname,
+                                        '-',
+                                        namesuffix]))],
+            VpcId=vpcid,
         )
